@@ -24,8 +24,7 @@ public class RefreshTokenInceptor implements HandlerInterceptor {
         //1.获取请求头的token
         String token =request.getHeader("Authorization");
         if(StrUtil.isBlank(token)){
-            response.setStatus(401);
-            return false;
+           return true;
         }
         //2.基于token获取redis中的用户
         String key = RedisConstants.LOGIN_USER_KEY + token;
@@ -33,9 +32,7 @@ public class RefreshTokenInceptor implements HandlerInterceptor {
                 .entries(RedisConstants.LOGIN_USER_KEY+token);
         //3.判断用户是否存在
         if (userMap.isEmpty()) {
-            //4.不存在拦截,返回401
-            response.setStatus(401);
-            return false;
+            return true;
         }
         //将查询到的hash数据转化为UserDTO
         UserDTO user = BeanUtil.fillBeanWithMap(userMap, new UserDTO(), false);
